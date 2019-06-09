@@ -7,7 +7,7 @@ use Nette;
 class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
 {
 	private $defaults = [
-		'tableName' => 'sessions',
+		'tableName' => 'session',
 	];
 
 	public function loadConfiguration()
@@ -18,11 +18,11 @@ class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
 
 		$builder = $this->getContainerBuilder();
 
-		$definition = $builder->addDefinition($this->prefix('sessionHandler'))
-			->setClass('Pematon\Session\MysqlSessionHandler')
-			->addSetup('setTableName', [$config['tableName']]);
-
-
+        $definition = $builder->addDefinition($this->prefix('sessionHandler'))
+            ->setType('Pematon\Session\MysqlSessionHandler')
+            ->setArguments([$this->getContainerBuilder()->getDefinition('database.iam.context') ])
+            ->addSetup('setTableName', [$config['tableName']]);
+        
 		$sessionDefinition = $builder->getDefinition('session');
 		$sessionSetup = $sessionDefinition->getSetup();
 		# Prepend setHandler method to other possible setups (setExpiration) which would start session prematurely
