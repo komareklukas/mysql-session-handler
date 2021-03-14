@@ -6,22 +6,16 @@ use Nette;
 
 class MysqlSessionHandlerExtension extends Nette\DI\CompilerExtension
 {
-	private $defaults = [
-		'tableName' => 'session',
-	];
-
 	public function loadConfiguration()
 	{
 		parent::loadConfiguration();
-
-		$config = $this->getConfig($this->defaults);
 
 		$builder = $this->getContainerBuilder();
 
         $definition = $builder->addDefinition($this->prefix('sessionHandler'))
             ->setType('Pematon\Session\MysqlSessionHandler')
             ->setArguments([$this->getContainerBuilder()->getDefinition('database.iam.context') ])
-            ->addSetup('setTableName', [$config['tableName']]);
+            ->addSetup('setTableName', ['session']);
         
 		$sessionDefinition = $builder->getDefinition('session');
 		$sessionSetup = $sessionDefinition->getSetup();
